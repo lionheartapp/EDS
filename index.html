@@ -439,7 +439,7 @@ body{font-family:'Bricolage Grotesque',sans-serif;background:var(--bg);color:var
 // ════════════════════════════════════════════
 // CONFIG — point this at your proxy server
 // ════════════════════════════════════════════
-const PROXY = 'https://eds-style-learner-proxy-production.up.railway.app';
+const PROXY = 'http://localhost:3579';
 const ANTHROPIC_KEY = ''; // Leave blank if set in server .env
 
 // ════════════════════════════════════════════
@@ -479,44 +479,22 @@ function go(id) {
 // ════════════════════════════════════════════
 // LOAD DATA FROM PROXY / SUPABASE
 // ════════════════════════════════════════════
-const SUPABASE_URL_DASH = 'https://enzflhixwgfkprnjorok.supabase.co';
-let SUPABASE_ANON_KEY = '';
-
 async function loadData() {
+  // Try to load from proxy cache stats first
   try {
-    // Check proxy health and get anon key
-    const health = await fetch(PROXY + '/api/health', { signal: AbortSignal.timeout(4000) });
-    const hd = await health.json();
-    if (hd.job?.running) startPolling();
-  } catch {}
+    const r = await fetch(PROXY + '/api/cache-stats', { signal: AbortSignal.timeout(3000) });
+    const d = await r.json();
 
-  // Try loading from Supabase directly
-  try {
-    await loadFromSupabase();
-    return;
-  } catch(e) {
-    console.log('Supabase load failed, using demo data:', e.message);
+    // In production this would pull from Supabase
+    // For demo, we load from proxy cache
+    if(d.total > 0) {
+      document.getElementById('livebage')?.remove();
+      showToast(`Connected — ${d.total} cached frames`);
+    }
+  } catch {
+    // Proxy offline — show demo data
+    loadDemoData();
   }
-  loadDemoData();
-}
-
-async function loadFromSupabase() {
-  // Use proxy to get Supabase data (avoids exposing anon key in frontend)
-  const r = await fetch(PROXY + '/api/supabase-data', { signal: AbortSignal.timeout(8000) });
-  if (!r.ok) throw new Error('Supabase proxy failed');
-  const data = await r.json();
-  if (!data.analyses?.length) throw new Error('No data');
-
-  D.analyses = data.analyses.map(row => ({
-    frameId: row.frame_id, frameName: row.frame_name, fileLabel: row.file_label,
-    page: row.page_name, cluster: row.cluster, width: 0, height: 0,
-    analysis: row.analysis, imageUrl: null
-  }));
-
-  if (data.styleGuide) D.styleGuide = data.styleGuide;
-  D.lastRun = data.analyses[0]?.analyzed_at ? new Date(data.analyses[0].analyzed_at) : new Date();
-  renderAll();
-  showToast(`Loaded ${D.analyses.length} real frames from Supabase`);
 }
 
 function loadDemoData() {
@@ -1068,72 +1046,8 @@ function dlGuide() {
   URL.revokeObjectURL(url);
 }
 
-// ── Job status polling ────────────────────────────────────
-let statusInterval = null;
-
 async function triggerRun() {
-  if (!confirm('Start a full pipeline run on the server? This will crawl all Edmunds Figma teams and may take several hours.')) return;
-
-  try {
-    const r = await fetch(PROXY + '/api/trigger-run', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ maxFrames: 50 })
-    });
-    const d = await r.json();
-    if (d.error) { showToast('Error: ' + d.error); return; }
-    showToast('Pipeline started on server — running in background');
-    startPolling();
-  } catch(e) {
-    showToast('Could not reach proxy server');
-  }
-}
-
-function startPolling() {
-  if (statusInterval) clearInterval(statusInterval);
-  showJobStatus();
-  statusInterval = setInterval(showJobStatus, 5000);
-}
-
-async function showJobStatus() {
-  try {
-    const r = await fetch(PROXY + '/api/job-status');
-    const d = await r.json();
-
-    const badge = document.getElementById('livebadge');
-    const runBtn = document.querySelector('.tb-run-btn');
-    const rundate = document.getElementById('rundate');
-
-    if (d.running) {
-      badge.textContent = `● ${d.phase?.toUpperCase() || 'RUNNING'}`;
-      badge.style.cssText = 'background:rgba(232,99,10,.2);color:#e8630a;border-color:rgba(232,99,10,.3)';
-      if (runBtn) { runBtn.textContent = `⏸ Running: ${d.progress?.analyzed || 0} analyzed`; runBtn.disabled = true; }
-      if (rundate) rundate.textContent = `${d.progress?.frames || 0} frames found`;
-    } else {
-      badge.textContent = d.status === 'complete' ? '● LIVE' : '● IDLE';
-      badge.style.cssText = d.status === 'complete' ? 'background:rgba(26,122,74,.2);color:#3dffa0;border-color:rgba(61,255,160,.2)' : '';
-      if (runBtn) { runBtn.textContent = '↺ Trigger Re-crawl'; runBtn.disabled = false; }
-
-      if (d.status === 'complete' && d.result) {
-        if (rundate) rundate.textContent = `${d.result.framesAnalyzed} frames · complete`;
-        showToast(`Pipeline complete — ${d.result.framesAnalyzed} frames analyzed`);
-        clearInterval(statusInterval);
-        // Reload data from Supabase
-        setTimeout(() => loadData(), 2000);
-      }
-
-      if (d.status === 'error') {
-        showToast('Pipeline error — check Railway logs');
-        clearInterval(statusInterval);
-      }
-    }
-
-    // Show log in console
-    if (d.recentLog?.length) {
-      const last = d.recentLog[d.recentLog.length - 1];
-      console.log(`[pipeline] ${last.msg}`);
-    }
-  } catch {}
+  showToast('Re-crawl triggered — check the pipeline tool');
 }
 
 // ════════════════════════════════════════════
