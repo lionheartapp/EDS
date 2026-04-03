@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EDS Intelligence — Edmunds Design System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Bricolage+Grotesque:wght@300;400;500;600;700;800&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#f5f4f0;
+  --s1:#ffffff;
+  --s2:#f0ede8;
+  --s3:#e8e4dc;
+  --b1:#ddd9d0;
+  --b2:#c8c4bb;
+  --ink:#1a1814;
+  --ink2:#4a4840;
+  --ink3:#8a8678;
+  --red:#c0392b;
+  --orange:#e8630a;
+  --blue:#1a4fa0;
+  --green:#1a7a4a;
+  --gold:#b8860b;
+  --r:10px;
+}
+
+body{font-family:'Bricolage Grotesque',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden}
+
+/* ── Top bar ── */
+.topbar{background:var(--ink);color:white;padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.tb-left{display:flex;align-items:center;gap:20px}
+.tb-logo{display:flex;align-items:center;gap:10px}
+.tb-e{font-size:15px;font-weight:800;letter-spacing:-.3px}
+.tb-divider{width:1px;height:20px;background:rgba(255,255,255,.15)}
+.tb-name{font-family:'Geist Mono',monospace;font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.06em}
+.tb-right{display:flex;align-items:center;gap:12px}
+.tb-badge{font-family:'Geist Mono',monospace;font-size:9px;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.12)}
+.tb-badge.live{background:rgba(26,122,74,.25);color:#3dffa0;border-color:rgba(61,255,160,.2)}
+.tb-run-btn{font-family:'Bricolage Grotesque',sans-serif;font-size:11px;font-weight:700;padding:6px 14px;background:var(--orange);border:none;border-radius:7px;color:white;cursor:pointer;transition:opacity .2s}
+.tb-run-btn:hover{opacity:.85}
+
+/* ── Layout ── */
+.shell{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 52px)}
+
+/* ── Sidebar ── */
+.sb{background:var(--s1);border-right:1px solid var(--b1);padding:20px 14px;display:flex;flex-direction:column;gap:6px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+
+.sb-section{font-family:'Geist Mono',monospace;font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;padding:12px 10px 5px;margin-top:6px}
+.sb-section:first-child{margin-top:0;padding-top:4px}
+
+.sbi{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer;transition:all .15s;border:1px solid transparent}
+.sbi:hover{background:var(--s2);color:var(--ink)}
+.sbi.active{background:var(--ink);color:white}
+.sbi .ico{font-size:13px;width:16px;text-align:center;flex-shrink:0}
+.sbi .ct{font-family:'Geist Mono',monospace;font-size:9px;margin-left:auto;background:var(--s3);color:var(--ink3);padding:1px 6px;border-radius:99px}
+.sbi.active .ct{background:rgba(255,255,255,.15);color:rgba(255,255,255,.7)}
+
+.sb-divider{height:1px;background:var(--b1);margin:8px 0}
+
+.run-info{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:12px;margin-top:auto}
+.ri-label{font-family:'Geist Mono',monospace;font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.ri-date{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.ri-meta{font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink3)}
+
+/* ── Main ── */
+.main{padding:32px 36px;overflow-y:auto}
+.pg{display:none;animation:fadeIn .25s ease}
+.pg.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Page headers ── */
+.ph{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--b1);display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.ph-left{}
+.ph-title{font-size:22px;font-weight:800;letter-spacing:-.4px;color:var(--ink);margin-bottom:4px}
+.ph-sub{font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink3);line-height:1.5}
+.ph-right{flex-shrink:0}
+
+/* ── Cards ── */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:20px;margin-bottom:14px}
+.card-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+/* ── Chips ── */
+.chip{font-family:'Geist Mono',monospace;font-size:9px;padding:2px 7px;border-radius:99px;white-space:nowrap}
+.chip-blue{background:rgba(26,79,160,.08);color:var(--blue);border:1px solid rgba(26,79,160,.15)}
+.chip-green{background:rgba(26,122,74,.08);color:var(--green);border:1px solid rgba(26,122,74,.15)}
+.chip-orange{background:rgba(232,99,10,.08);color:var(--orange);border:1px solid rgba(232,99,10,.15)}
+.chip-red{background:rgba(192,57,43,.08);color:var(--red);border:1px solid rgba(192,57,43,.15)}
+.chip-gold{background:rgba(184,134,11,.08);color:var(--gold);border:1px solid rgba(184,134,11,.15)}
+.chip-ink{background:var(--ink);color:white}
+
+/* ── Search bar ── */
+.search-wrap{position:relative;margin-bottom:20px}
+.search-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink3);font-size:14px;pointer-events:none}
+.search-input{width:100%;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:12px 16px 12px 40px;font-family:'Bricolage Grotesque',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
+.search-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,79,160,.08)}
+.search-input::placeholder{color:var(--ink3)}
+.search-right{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:6px}
+.search-kbd{font-family:'Geist Mono',monospace;font-size:9px;padding:2px 6px;border:1px solid var(--b2);border-radius:4px;color:var(--ink3);background:var(--s2)}
+
+/* ── AI Query ── */
+.ai-query-box{background:var(--ink);border-radius:12px;padding:20px;margin-bottom:20px;position:relative;overflow:hidden}
+.ai-query-box::before{content:'';position:absolute;top:-40%;right:-10%;width:60%;height:200%;background:radial-gradient(ellipse,rgba(232,99,10,.12) 0%,transparent 70%);pointer-events:none}
+.aq-label{font-family:'Geist Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.aq-input-row{display:flex;gap:8px;align-items:center}
+.aq-input{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:11px 15px;color:white;font-family:'Bricolage Grotesque',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.aq-input:focus{border-color:var(--orange)}
+.aq-input::placeholder{color:rgba(255,255,255,.3)}
+.aq-btn{padding:11px 18px;background:var(--orange);border:none;border-radius:8px;color:white;font-family:'Bricolage Grotesque',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.aq-btn:hover{opacity:.88}
+.aq-btn:disabled{opacity:.4;cursor:not-allowed}
+.aq-examples{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.aq-ex{font-family:'Geist Mono',monospace;font-size:10px;padding:4px 10px;border-radius:99px;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.45);cursor:pointer;transition:all .15s;background:transparent}
+.aq-ex:hover{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.7)}
+.aq-result{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);display:none}
+.aq-result.visible{display:block}
+.aq-result-text{font-size:13px;line-height:1.75;color:rgba(255,255,255,.85);white-space:pre-wrap}
+.aq-thinking{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.4);font-family:'Geist Mono',monospace;font-size:11px}
+.aq-dots{display:flex;gap:3px}
+.aq-dot{width:5px;height:5px;border-radius:50%;background:var(--orange);animation:dotPulse 1.2s ease infinite}
+.aq-dot:nth-child(2){animation-delay:.2s}
+.aq-dot:nth-child(3){animation-delay:.4s}
+@keyframes dotPulse{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+
+/* ── Style Guide ── */
+.guide-content{font-size:13px;line-height:1.85;color:var(--ink2)}
+.guide-content h1{font-size:18px;font-weight:800;color:var(--ink);margin:24px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.guide-content h2{font-size:14px;font-weight:800;color:var(--ink);margin:20px 0 8px}
+.guide-content h3{font-size:12px;font-weight:700;color:var(--ink2);margin:14px 0 6px}
+.guide-content p{margin-bottom:10px}
+.guide-content ul,
+.guide-content ol{padding-left:20px;margin-bottom:10px}
+.guide-content li{margin-bottom:4px}
+.guide-content strong{color:var(--ink);font-weight:700}
+.guide-content code{font-family:'Geist Mono',monospace;font-size:11px;background:var(--s2);border:1px solid var(--b1);border-radius:4px;padding:1px 5px;color:var(--blue)}
+.guide-content hr{border:none;border-top:1px solid var(--b1);margin:20px 0}
+
+/* ── Stat strip ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:16px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--b1)}
+.stat.blue::before{background:var(--blue)}
+.stat.orange::before{background:var(--orange)}
+.stat.green::before{background:var(--green)}
+.stat.gold::before{background:var(--gold)}
+.stat-n{font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.5px;line-height:1;margin-bottom:4px}
+.stat-l{font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em}
+.stat-d{font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink3);margin-top:4px}
+
+/* ── Filter row ── */
+.filter-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.filter-label{font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink3)}
+.filter-btn{font-family:'Geist Mono',monospace;font-size:10px;padding:5px 11px;border-radius:99px;border:1px solid var(--b1);background:var(--s1);color:var(--ink3);cursor:pointer;transition:all .15s}
+.filter-btn:hover{border-color:var(--b2);color:var(--ink2)}
+.filter-btn.active{background:var(--ink);color:white;border-color:var(--ink)}
+
+/* ── Frame grid ── */
+.frame-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.frame-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+.frame-card:hover{border-color:var(--b2);transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,24,20,.08)}
+.frame-thumb{aspect-ratio:4/3;background:var(--s3);overflow:hidden;position:relative}
+.frame-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.frame-thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--b2)}
+.frame-cluster-dot{position:absolute;top:8px;right:8px;font-family:'Geist Mono',monospace;font-size:8px;padding:2px 6px;border-radius:99px}
+.frame-info{padding:10px 12px}
+.frame-name{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frame-meta{font-family:'Geist Mono',monospace;font-size:9px;color:var(--ink3)}
+.frame-notes{font-size:10px;color:var(--ink2);margin-top:5px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ── Frame detail modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,24,20,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--s1);border-radius:14px;width:100%;max-width:780px;max-height:88vh;overflow-y:auto;position:relative}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--s1);z-index:1}
+.modal-title{font-size:15px;font-weight:800}
+.modal-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--b1);background:var(--s2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink2);transition:all .15s}
+.modal-close:hover{background:var(--b1)}
+.modal-body{padding:20px 24px}
+.modal-img{width:100%;border-radius:8px;border:1px solid var(--b1);margin-bottom:16px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-section{background:var(--s2);border-radius:8px;padding:13px}
+.ms-label{font-family:'Geist Mono',monospace;font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.ms-content{font-size:11px;line-height:1.65;color:var(--ink2)}
+.ms-content strong{color:var(--ink)}
+.color-swatches{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.swatch{width:24px;height:24px;border-radius:5px;border:1px solid rgba(0,0,0,.08);cursor:pointer;position:relative;transition:transform .15s}
+.swatch:hover{transform:scale(1.2)}
+.swatch-tooltip{position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--ink);color:white;font-family:'Geist Mono',monospace;font-size:9px;padding:2px 6px;border-radius:4px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s}
+.swatch:hover .swatch-tooltip{opacity:1}
+
+/* ── Color palette view ── */
+.palette-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.palette-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
+.palette-swatch{height:80px}
+.palette-info{padding:10px}
+.palette-hex{font-family:'Geist Mono',monospace;font-size:11px;font-weight:500;color:var(--ink)}
+.palette-name{font-family:'Geist Mono',monospace;font-size:9px;color:var(--ink3);margin-top:2px}
+.palette-count{font-family:'Geist Mono',monospace;font-size:9px;color:var(--ink3);margin-top:2px}
+
+/* ── Typography view ── */
+.type-sample{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:20px;margin-bottom:10px}
+.type-meta{font-family:'Geist Mono',monospace;font-size:9px;color:var(--ink3);margin-bottom:10px;display:flex;gap:12px}
+.type-preview{font-size:28px;font-weight:700;color:var(--ink);line-height:1.1;margin-bottom:6px}
+.type-preview.sm{font-size:16px}
+.type-preview.xs{font-size:12px;font-weight:400}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:60px 20px;color:var(--ink3)}
+.empty-ico{font-size:36px;margin-bottom:12px;opacity:.4}
+.empty-title{font-size:14px;font-weight:700;color:var(--ink2);margin-bottom:6px}
+.empty-sub{font-family:'Geist Mono',monospace;font-size:11px;line-height:1.5}
+
+/* ── Buttons ── */
+.btn-p{padding:10px 18px;background:var(--ink);border:none;border-radius:8px;color:white;font-family:'Bricolage Grotesque',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .2s;display:inline-flex;align-items:center;gap:7px}
+.btn-p:hover{opacity:.8}
+.btn-s{padding:8px 15px;background:var(--s1);border:1px solid var(--b2);border-radius:8px;color:var(--ink2);font-family:'Bricolage Grotesque',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-s:hover{border-color:var(--ink2);color:var(--ink)}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:white;font-family:'Geist Mono',monospace;font-size:11px;padding:10px 16px;border-radius:9px;z-index:300;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:99px}
+
+/* ── Loading skeleton ── */
+.skeleton{background:linear-gradient(90deg,var(--s2) 25%,var(--s3) 50%,var(--s2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+@media(max-width:768px){
+  .shell{grid-template-columns:1fr}
+  .sb{display:none}
+  .stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<header class="topbar">
+  <div class="tb-left">
+    <div class="tb-logo">
+      <span class="tb-e">Edmunds</span>
+      <div class="tb-divider"></div>
+      <span class="tb-name">DESIGN INTELLIGENCE</span>
+    </div>
+    <div class="tb-badge live" id="livebadge">● LIVE</div>
+    <div class="tb-badge" id="rundate">Loading...</div>
+  </div>
+  <div class="tb-right">
+    <div class="tb-badge" id="framecount">— frames</div>
+    <button class="tb-run-btn" onclick="triggerRun()">↺ Trigger Re-crawl</button>
+  </div>
+</header>
+
+<div class="shell">
+
+<!-- Sidebar -->
+<aside class="sb">
+  <div class="sb-section">Overview</div>
+  <div class="sbi active" id="sbi-home" onclick="go('home')"><span class="ico">⌂</span>Dashboard</div>
+  <div class="sbi" id="sbi-guide" onclick="go('guide')"><span class="ico">◈</span>Style Guide</div>
+  <div class="sbi" id="sbi-query" onclick="go('query')"><span class="ico">✦</span>Ask AI<span class="ct">new</span></div>
+
+  <div class="sb-section">Browse</div>
+  <div class="sbi" id="sbi-frames" onclick="go('frames')"><span class="ico">⬡</span>All Frames<span class="ct" id="sb-fct">0</span></div>
+  <div class="sbi" id="sbi-colors" onclick="go('colors')"><span class="ico">◉</span>Color Palette</div>
+  <div class="sbi" id="sbi-type" onclick="go('type')"><span class="ico">T</span>Typography</div>
+  <div class="sbi" id="sbi-components" onclick="go('components')"><span class="ico">◫</span>Components<span class="ct" id="sb-cct">0</span></div>
+  <div class="sbi" id="sbi-ads" onclick="go('ads')"><span class="ico">▣</span>Ad Units<span class="ct" id="sb-act">0</span></div>
+
+  <div class="sb-divider"></div>
+
+  <div class="run-info">
+    <div class="ri-label">Last Run</div>
+    <div class="ri-date" id="ri-date">—</div>
+    <div class="ri-meta" id="ri-meta">No data yet</div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- Home -->
+  <div class="pg active" id="pg-home">
+    <div class="ph">
+      <div class="ph-left">
+        <div class="ph-title">Design Intelligence</div>
+        <div class="ph-sub">Live view of your design system's visual language — updated on every pipeline run.</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat blue"><div class="stat-n" id="st-frames">—</div><div class="stat-l">Frames Analyzed</div><div class="stat-d" id="st-files">across — files</div></div>
+      <div class="stat orange"><div class="stat-n" id="st-components">—</div><div class="stat-l">Components</div><div class="stat-d">extracted</div></div>
+      <div class="stat green"><div class="stat-n" id="st-colors">—</div><div class="stat-l">Unique Colors</div><div class="stat-d">in palette</div></div>
+      <div class="stat gold"><div class="stat-n" id="st-fonts">—</div><div class="stat-l">Font Families</div><div class="stat-d">detected</div></div>
+    </div>
+
+    <div class="ai-query-box">
+      <div class="aq-label">✦ Ask about your design system</div>
+      <div class="aq-input-row">
+        <input class="aq-input" id="homeQuery" placeholder="e.g. What button styles do we use most?" onkeydown="if(event.key==='Enter')runQuery('home')" />
+        <button class="aq-btn" id="homeQueryBtn" onclick="runQuery('home')">Ask ✦</button>
+      </div>
+      <div class="aq-examples">
+        <span class="aq-ex" onclick="setQuery('home','What colors dominate our ad units?')">Ad unit colors</span>
+        <span class="aq-ex" onclick="setQuery('home','How do we style primary buttons?')">Button styles</span>
+        <span class="aq-ex" onclick="setQuery('home','What fonts do we use for headings?')">Heading fonts</span>
+        <span class="aq-ex" onclick="setQuery('home','Describe our brand personality')">Brand personality</span>
+        <span class="aq-ex" onclick="setQuery('home','What spacing patterns repeat most?')">Spacing patterns</span>
+      </div>
+      <div class="aq-result" id="homeResult">
+        <div class="aq-thinking" id="homeThinking" style="display:none"><div class="aq-dots"><div class="aq-dot"></div><div class="aq-dot"></div><div class="aq-dot"></div></div>Thinking...</div>
+        <div class="aq-result-text" id="homeResultText"></div>
+      </div>
+    </div>
+
+    <!-- Recent frames -->
+    <div class="card">
+      <div class="card-title">Recent Frames <span class="chip chip-blue" id="recentCount">0</span></div>
+      <div class="frame-grid" id="homeFrames"></div>
+    </div>
+  </div>
+
+  <!-- Style Guide -->
+  <div class="pg" id="pg-guide">
+    <div class="ph">
+      <div class="ph-left"><div class="ph-title">Style Guide</div><div class="ph-sub">AI-synthesized visual language document. Updated on every pipeline run.</div></div>
+      <div class="ph-right"><button class="btn-s" onclick="dlGuide()">↓ Download .md</button></div>
+    </div>
+    <div class="card">
+      <div class="guide-content" id="guideContent">
+        <div class="empty"><div class="empty-ico">◈</div><div class="empty-title">No style guide yet</div><div class="empty-sub">Run the pipeline to generate your first style guide.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Query -->
+  <div class="pg" id="pg-query">
+    <div class="ph">
+      <div class="ph-left"><div class="ph-title">Ask AI</div><div class="ph-sub">Query your design system in plain English. Powered by Claude + your style index.</div></div>
+    </div>
+
+    <div class="ai-query-box">
+      <div class="aq-label">✦ Ask anything about your design system</div>
+      <div class="aq-input-row">
+        <input class="aq-input" id="queryInput" placeholder="How should I design a new vehicle card component?" onkeydown="if(event.key==='Enter')runQuery('main')" />
+        <button class="aq-btn" id="mainQueryBtn" onclick="runQuery('main')">Ask ✦</button>
+      </div>
+      <div class="aq-examples">
+        <span class="aq-ex" onclick="setQuery('main','Design a new vehicle listing card that matches our system')">Vehicle card spec</span>
+        <span class="aq-ex" onclick="setQuery('main','What makes a good ad unit in our style?')">Ad unit rules</span>
+        <span class="aq-ex" onclick="setQuery('main','Generate CSS variables for our color system')">CSS variables</span>
+        <span class="aq-ex" onclick="setQuery('main','What are our 10 core design rules?')">Design rules</span>
+        <span class="aq-ex" onclick="setQuery('main','How do we handle dark backgrounds?')">Dark backgrounds</span>
+        <span class="aq-ex" onclick="setQuery('main','What typography scale should I use for a new page?')">Type scale</span>
+      </div>
+      <div class="aq-result visible" id="mainResult">
+        <div class="aq-thinking" id="mainThinking" style="display:none"><div class="aq-dots"><div class="aq-dot"></div><div class="aq-dot"></div><div class="aq-dot"></div></div>Thinking...</div>
+        <div class="aq-result-text" id="mainResultText" style="color:rgba(255,255,255,.4);font-family:'Geist Mono',monospace;font-size:11px">Ask a question to get started.</div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="card" id="queryHistory" style="display:none">
+      <div class="card-title">Recent Questions</div>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <!-- All Frames -->
+  <div class="pg" id="pg-frames">
+    <div class="ph">
+      <div class="ph-left"><div class="ph-title">All Frames</div><div class="ph-sub">Every analyzed frame. Filter by cluster or search by name.</div></div>
+    </div>
+    <div class="search-wrap">
+      <span class="search-ico">⌕</span>
+      <input class="search-input" id="frameSearch" placeholder="Search frames by name, file, or page..." oninput="filterFrames()"/>
+      <div class="search-right"><span class="search-kbd">⌘K</span></div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">Cluster:</span>
+      <button class="filter-btn active" onclick="setClusterFilter('all',this)">All</button>
+      <button class="filter-btn" onclick="setClusterFilter('Components',this)">Components</button>
+      <button class="filter-btn" onclick="setClusterFilter('Layouts',this)">Layouts</button>
+      <button class="filter-btn" onclick="setClusterFilter('Ad Units',this)">Ad Units</button>
+      <button class="filter-btn" onclick="setClusterFilter('Mobile',this)">Mobile</button>
+      <button class="filter-btn" onclick="setClusterFilter('Other',this)">Other</button>
+    </div>
+    <div class="frame-grid" id="allFrames"></div>
+  </div>
+
+  <!-- Colors -->
+  <div class="pg" id="pg-colors">
+    <div class="ph"><div class="ph-left"><div class="ph-title">Color Palette</div><div class="ph-sub">Colors extracted across all analyzed frames, ranked by frequency.</div></div></div>
+    <div class="card"><div class="card-title">Dominant Colors</div><div class="palette-grid" id="colorGrid"></div></div>
+  </div>
+
+  <!-- Typography -->
+  <div class="pg" id="pg-type">
+    <div class="ph"><div class="ph-left"><div class="ph-title">Typography</div><div class="ph-sub">Font families and styles detected across your design system.</div></div></div>
+    <div id="typeContent"></div>
+  </div>
+
+  <!-- Components -->
+  <div class="pg" id="pg-components">
+    <div class="ph"><div class="ph-left"><div class="ph-title">Components</div><div class="ph-sub">Frames classified as component-level designs.</div></div></div>
+    <div class="frame-grid" id="compFrames"></div>
+  </div>
+
+  <!-- Ads -->
+  <div class="pg" id="pg-ads">
+    <div class="ph"><div class="ph-left"><div class="ph-title">Ad Units</div><div class="ph-sub">Ad and banner frames — sizing, style patterns, color usage.</div></div></div>
+    <div class="frame-grid" id="adFrames"></div>
+  </div>
+
+</main>
+</div>
+
+<!-- Frame detail modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div><div class="modal-title" id="modalTitle">Frame</div><div style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--ink3);margin-top:2px" id="modalMeta"></div></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════
+// CONFIG — point this at your proxy server
+// ════════════════════════════════════════════
+const PROXY = 'http://localhost:3579';
+const ANTHROPIC_KEY = ''; // Leave blank if set in server .env
+
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+const D = {
+  analyses: [],
+  styleGuide: '',
+  lastRun: null,
+  queryHistory: []
+};
+
+let activeClusterFilter = 'all';
+
+// ════════════════════════════════════════════
+// CLUSTER COLORS
+// ════════════════════════════════════════════
+const CC = {
+  'Components': { bg:'rgba(26,79,160,.08)', color:'var(--blue)', border:'rgba(26,79,160,.15)' },
+  'Layouts':    { bg:'rgba(26,122,74,.08)', color:'var(--green)', border:'rgba(26,122,74,.15)' },
+  'Ad Units':   { bg:'rgba(232,99,10,.08)', color:'var(--orange)', border:'rgba(232,99,10,.15)' },
+  'Mobile':     { bg:'rgba(192,57,43,.08)', color:'var(--red)', border:'rgba(192,57,43,.15)' },
+  'Other':      { bg:'rgba(138,134,120,.08)', color:'var(--ink3)', border:'rgba(138,134,120,.15)' }
+};
+
+// ════════════════════════════════════════════
+// NAV
+// ════════════════════════════════════════════
+function go(id) {
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sbi').forEach(s => s.classList.remove('active'));
+  document.getElementById('pg-' + id).classList.add('active');
+  const sbi = document.getElementById('sbi-' + id);
+  if(sbi) sbi.classList.add('active');
+}
+
+// ════════════════════════════════════════════
+// LOAD DATA FROM PROXY / SUPABASE
+// ════════════════════════════════════════════
+async function loadData() {
+  // Try to load from proxy cache stats first
+  try {
+    const r = await fetch(PROXY + '/api/cache-stats', { signal: AbortSignal.timeout(3000) });
+    const d = await r.json();
+
+    // In production this would pull from Supabase
+    // For demo, we load from proxy cache
+    if(d.total > 0) {
+      document.getElementById('livebage')?.remove();
+      showToast(`Connected — ${d.total} cached frames`);
+    }
+  } catch {
+    // Proxy offline — show demo data
+    loadDemoData();
+  }
+}
+
+function loadDemoData() {
+  // Simulate realistic Edmunds data for demo
+  const files = ['EDS (Core)', 'Ad Campaigns', 'Homepage Redesign', 'JPMC Credit Campaign'];
+  const pages = ['Components', 'Layouts', 'Mobile', 'Ads', 'Prototypes'];
+  const clusterDist = { 'Components': 45, 'Layouts': 28, 'Ad Units': 35, 'Mobile': 22, 'Other': 15 };
+
+  let id = 0;
+  Object.entries(clusterDist).forEach(([cluster, count]) => {
+    for(let i = 0; i < count; i++) {
+      const file = files[Math.floor(Math.random() * files.length)];
+      D.analyses.push({
+        frameId: 'f' + (++id),
+        frameName: generateFrameName(cluster, i),
+        fileLabel: file,
+        page: pages[Math.floor(Math.random() * pages.length)],
+        cluster,
+        width: cluster === 'Ad Units' ? [300,728,320,160][Math.floor(Math.random()*4)] : cluster === 'Mobile' ? 375 : [1440,1280,960][Math.floor(Math.random()*3)],
+        height: 400 + Math.floor(Math.random() * 600),
+        imageUrl: null,
+        analysis: generateDemoAnalysis(cluster)
+      });
+    }
+  });
+
+  D.styleGuide = generateDemoStyleGuide();
+  D.lastRun = new Date(Date.now() - 1000 * 60 * 60 * 3); // 3 hours ago
+
+  renderAll();
+}
+
+function generateFrameName(cluster, i) {
+  const names = {
+    'Components': ['Button/Primary','Button/Secondary','Card/VehicleListing','Card/Dealer','Nav/TopBar','Modal/ContactDealer','Form/LeadCapture','Badge/Price','Chip/Filter','Input/Search','Avatar/User','Tooltip/Base','Dropdown/Sort'],
+    'Layouts': ['Homepage/Hero','SRP/VehicleGrid','VDP/Above Fold','VDP/Specs','Dealer/Profile','Research/Overview','Compare/Table','Homepage/Editorial','SRP/Map View'],
+    'Ad Units': ['Display/300x250','Display/728x90','Display/320x50','Display/160x600','Display/970x250','Mobile/320x480','Interstitial/375x667','Native/FeedCard'],
+    'Mobile': ['Nav/Mobile','SRP/Mobile','VDP/Mobile','Homepage/Mobile','Filter/Mobile Drawer','Lead Form/Mobile'],
+    'Other': ['Exploration/Dark Mode','Archive/Old Homepage','WIP/New Search','Misc/Icons','Brand/Logo Variants']
+  };
+  const list = names[cluster] || ['Frame ' + i];
+  return list[i % list.length];
+}
+
+function generateDemoAnalysis(cluster) {
+  const palettes = {
+    'Components': { dominant:['#1A3A6B','#FFFFFF'], accents:['#2557A7','#E8630A'], background:'#FFFFFF', text:'#1A1814' },
+    'Ad Units':   { dominant:['#1A3A6B','#E8630A'], accents:['#FFFFFF','#F5F4F0'], background:'#1A3A6B', text:'#FFFFFF' },
+    'Layouts':    { dominant:['#F5F4F0','#1A1814'], accents:['#E8630A','#2557A7'], background:'#F5F4F0', text:'#1A1814' },
+    'Mobile':     { dominant:['#FFFFFF','#1A3A6B'], accents:['#E8630A'], background:'#FFFFFF', text:'#1A1814' },
+    'Other':      { dominant:['#333333','#666666'], accents:['#E8630A'], background:'#F0F0F0', text:'#333333' }
+  };
+  const notes = {
+    'Components': 'Clean, functional component with clear hierarchy. Blue primary action with orange accent on hover states.',
+    'Ad Units': 'High-contrast layout using Edmunds navy as dominant background. Orange CTA creates strong focal point.',
+    'Layouts': 'Generous whitespace with editorial grid. Typography-forward hierarchy with supporting imagery.',
+    'Mobile': 'Touch-optimized layout with 44px minimum tap targets. Simplified navigation pattern.',
+    'Other': 'Exploratory or archival frame. May not reflect current design direction.'
+  };
+  return {
+    colors: palettes[cluster] || palettes['Other'],
+    typography: { fonts:['Graphik','Georgia'], headingWeight:'700', scale:'modular', style:'professional' },
+    layout: { type: cluster==='Ad Units'?'fixed':'fluid', columns: cluster==='Mobile'?1:12, spacing:'8px base', density: cluster==='Ad Units'?'high':'medium' },
+    components: [{ type:'Button', style:'rounded, 4px radius, uppercase label' }, { type:'Card', style:'white background, subtle shadow, 8px radius' }],
+    brand: { tone:'professional', keywords:['trustworthy','automotive','data-driven','accessible'] },
+    designNotes: notes[cluster] || 'Standard frame.'
+  };
+}
+
+function generateDemoStyleGuide() {
+  return `# Edmunds Visual Language Guide
+*Generated from 145 analyzed frames across 4 Figma files*
+
+---
+
+## 1. Core Color System
+
+**Primary Palette**
+- Navy \`#1A3A6B\` — Primary brand color. Used for headers, CTAs, key UI elements
+- Orange \`#E8630A\` — Action color. CTAs, highlights, price callouts
+- White \`#FFFFFF\` — Default background, card surfaces
+- Off-white \`#F5F4F0\` — Page backgrounds, alternate surfaces
+
+**Semantic Colors**
+- Success \`#1A7A4A\` — Positive price delta, available status
+- Error \`#C0392B\` — Form errors, unavailable
+- Warning \`#B8860B\` — Limited availability, expiring offers
+
+**Usage Rule:** Navy and Orange never share equal weight — one always dominates. Navy-dominant for informational, Orange-dominant for action-required contexts.
+
+---
+
+## 2. Typography System
+
+**Font Families**
+- **Graphik** — All UI text, headings, labels (sans-serif)
+- **Georgia** — Editorial content, long-form articles, pull quotes
+
+**Scale**
+- Display: 40–56px / 800 weight
+- H1: 28–32px / 700 weight
+- H2: 22–24px / 700 weight
+- H3: 16–18px / 600 weight
+- Body: 14–16px / 400 weight
+- Caption / Label: 11–12px / 400–500 weight
+- Mono (data): Geist Mono, 12px
+
+---
+
+## 3. Spacing & Layout
+
+**Base unit:** 8px. All spacing is a multiple of 8.
+**Common values:** 8, 16, 24, 32, 48, 64px
+
+**Grid:** 12-column, 1440px max-width, 24px gutters, 40px outer margins
+**Mobile:** Single column, 16px outer margins, 16px gutters
+
+---
+
+## 4. Component Language
+
+**Buttons**
+- Primary: Navy fill, white text, 4px radius, 14px Graphik 600, 40px height
+- Secondary: White fill, navy border, navy text
+- Destructive: Red fill
+- All buttons: uppercase labels, 16–20px horizontal padding
+
+**Cards**
+- White background, 1px \`#DDD9D0\` border, 8px radius
+- 16–20px internal padding
+- Subtle box-shadow on hover: \`0 4px 16px rgba(26,24,20,.08)\`
+
+**Ad Units**
+- Navy or white dominant backgrounds only
+- Orange CTA button always present
+- Edmunds logo top-left, legal copy bottom
+- High contrast — WCAG AA minimum
+
+---
+
+## 5. Visual Personality
+
+**Words that describe Edmunds design:** Trustworthy, data-forward, accessible, automotive-confident, clean
+
+**What we always do:** Lead with data. Use whitespace to create clarity, not decoration. Orange only for action — never decoration.
+
+**What we never do:** Gradients on primary surfaces. Script fonts. Decorative illustrations without data context.
+
+---
+
+## 6. The 10 Design Rules
+
+1. Navy and orange are never decorative — they always signal meaning
+2. Every screen has one primary action. One orange button per view.
+3. Typography hierarchy is non-negotiable — visual weight must map to information priority
+4. Cards use white backgrounds exclusively. Page backgrounds use off-white.
+5. Touch targets are 44px minimum, always
+6. Price data uses Geist Mono. Never a proportional font for numbers.
+7. Images are always supplementary — the design works without them
+8. Form labels are always visible (no floating label patterns)
+9. Ad units must work in navy-on-white AND white-on-navy
+10. Spacing is always an 8px multiple — no arbitrary values
+
+---
+
+## 7. New Component Checklist
+
+Before shipping any new component, verify:
+- [ ] Color usage follows semantic rules (orange = action only)
+- [ ] Typography uses Graphik or Georgia — no substitutes
+- [ ] All spacing values are 8px multiples
+- [ ] Works on white AND off-white backgrounds
+- [ ] Mobile breakpoint defined (375px minimum)
+- [ ] Touch targets ≥ 44px
+- [ ] WCAG AA contrast minimum met
+- [ ] No orange used decoratively`;
+}
+
+// ════════════════════════════════════════════
+// RENDER ALL
+// ════════════════════════════════════════════
+function renderAll() {
+  renderStats();
+  renderStyleGuide();
+  renderFrameGrids();
+  renderColors();
+  renderTypography();
+  updateSidebar();
+  updateTopBar();
+}
+
+function renderStats() {
+  const total = D.analyses.length;
+  const components = D.analyses.filter(a => a.cluster === 'Components').length;
+  const files = [...new Set(D.analyses.map(a => a.fileLabel))].length;
+
+  // Count unique colors
+  const allColors = new Set();
+  D.analyses.forEach(a => {
+    const c = a.analysis?.colors;
+    if(c) {
+      [...(c.dominant||[]), ...(c.accents||[])].forEach(h => allColors.add(h.toLowerCase()));
+    }
+  });
+
+  // Count fonts
+  const allFonts = new Set();
+  D.analyses.forEach(a => {
+    (a.analysis?.typography?.fonts||[]).forEach(f => allFonts.add(f));
+  });
+
+  document.getElementById('st-frames').textContent = total;
+  document.getElementById('st-files').textContent = `across ${files} file${files!==1?'s':''}`;
+  document.getElementById('st-components').textContent = components;
+  document.getElementById('st-colors').textContent = allColors.size;
+  document.getElementById('st-fonts').textContent = allFonts.size;
+}
+
+function renderStyleGuide() {
+  const el = document.getElementById('guideContent');
+  if(!D.styleGuide) return;
+  el.innerHTML = markdownToHtml(D.styleGuide);
+}
+
+function markdownToHtml(md) {
+  return md
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+    .replace(/^- \[ \] (.+)$/gm, '<li style="list-style:none;padding-left:4px">☐ $1</li>')
+    .replace(/^- \[x\] (.+)$/gm, '<li style="list-style:none;padding-left:4px;color:var(--green)">☑ $1</li>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+    .replace(/^---$/gm, '<hr/>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(?!<[h|l|h|p|u])/gm, '')
+    .replace(/<\/li>\n<li/g, '</li><li');
+}
+
+function renderFrameGrid(containerId, frames, limit) {
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML = '';
+  const list = limit ? frames.slice(0, limit) : frames;
+
+  if(!list.length) {
+    el.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-ico">⬡</div><div class="empty-title">No frames</div></div>`;
+    return;
+  }
+
+  list.forEach(a => {
+    const cc = CC[a.cluster] || CC['Other'];
+    const card = document.createElement('div');
+    card.className = 'frame-card';
+    card.onclick = () => openModal(a);
+    card.innerHTML = `
+      <div class="frame-thumb">
+        ${a.imageUrl ? `<img src="${a.imageUrl}" loading="lazy" alt="${a.frameName}"/>` : `<div class="frame-thumb-placeholder">⬡</div>`}
+        <div class="frame-cluster-dot" style="background:${cc.bg};color:${cc.color};border:1px solid ${cc.border}">${a.cluster}</div>
+      </div>
+      <div class="frame-info">
+        <div class="frame-name">${a.frameName}</div>
+        <div class="frame-meta">${a.fileLabel} · ${a.width}×${a.height}</div>
+        <div class="frame-notes">${a.analysis?.designNotes||''}</div>
+      </div>
+    `;
+    el.appendChild(card);
+  });
+}
+
+function renderFrameGrids() {
+  renderFrameGrid('homeFrames', D.analyses, 12);
+  renderFrameGrid('allFrames', D.analyses);
+  renderFrameGrid('compFrames', D.analyses.filter(a=>a.cluster==='Components'));
+  renderFrameGrid('adFrames', D.analyses.filter(a=>a.cluster==='Ad Units'));
+  document.getElementById('recentCount').textContent = Math.min(12, D.analyses.length);
+}
+
+function renderColors() {
+  const colorFreq = {};
+  D.analyses.forEach(a => {
+    const c = a.analysis?.colors;
+    if(!c) return;
+    [...(c.dominant||[]), ...(c.accents||[])].forEach(h => {
+      const hex = h.toLowerCase();
+      colorFreq[hex] = (colorFreq[hex]||0) + 1;
+    });
+  });
+
+  const sorted = Object.entries(colorFreq).sort((a,b)=>b[1]-a[1]).slice(0,24);
+  const grid = document.getElementById('colorGrid');
+  grid.innerHTML = '';
+
+  sorted.forEach(([hex, count]) => {
+    if(!hex.startsWith('#')) return;
+    const card = document.createElement('div');
+    card.className = 'palette-card';
+    card.innerHTML = `
+      <div class="palette-swatch" style="background:${hex}"></div>
+      <div class="palette-info">
+        <div class="palette-hex">${hex.toUpperCase()}</div>
+        <div class="palette-count">Used in ${count} frames</div>
+      </div>
+    `;
+    card.querySelector('.palette-swatch').onclick = () => {
+      navigator.clipboard.writeText(hex.toUpperCase());
+      showToast('Copied: ' + hex.toUpperCase());
+    };
+    grid.appendChild(card);
+  });
+
+  if(!sorted.length) grid.innerHTML = '<div class="empty"><div class="empty-ico">◉</div><div class="empty-title">No color data</div></div>';
+}
+
+function renderTypography() {
+  const fontFreq = {};
+  D.analyses.forEach(a => {
+    (a.analysis?.typography?.fonts||[]).forEach(f => {
+      fontFreq[f] = (fontFreq[f]||0) + 1;
+    });
+  });
+
+  const el = document.getElementById('typeContent');
+  el.innerHTML = '';
+
+  if(!Object.keys(fontFreq).length) {
+    el.innerHTML = '<div class="empty"><div class="empty-ico">T</div><div class="empty-title">No typography data</div></div>';
+    return;
+  }
+
+  Object.entries(fontFreq).sort((a,b)=>b[1]-a[1]).forEach(([font, count]) => {
+    const card = document.createElement('div');
+    card.className = 'type-sample card';
+    card.innerHTML = `
+      <div class="type-meta"><span>${font}</span><span>Used in ${count} frames</span></div>
+      <div class="type-preview" style="font-family:'${font}',sans-serif">The quick brown fox</div>
+      <div class="type-preview sm" style="font-family:'${font}',sans-serif">Vehicle Listing Details — 2024 Honda Civic</div>
+      <div class="type-preview xs" style="font-family:'${font}',sans-serif">MSRP $24,990 · 12,400 miles · Santa Monica, CA</div>
+    `;
+    el.appendChild(card);
+  });
+}
+
+function updateSidebar() {
+  document.getElementById('sb-fct').textContent = D.analyses.length;
+  document.getElementById('sb-cct').textContent = D.analyses.filter(a=>a.cluster==='Components').length;
+  document.getElementById('sb-act').textContent = D.analyses.filter(a=>a.cluster==='Ad Units').length;
+
+  if(D.lastRun) {
+    const ago = Math.round((Date.now() - D.lastRun)/1000/60);
+    const agoStr = ago < 60 ? `${ago}m ago` : `${Math.round(ago/60)}h ago`;
+    document.getElementById('ri-date').textContent = D.lastRun.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    document.getElementById('ri-meta').textContent = `${D.analyses.length} frames · ${agoStr}`;
+  }
+}
+
+function updateTopBar() {
+  document.getElementById('framecount').textContent = D.analyses.length + ' frames';
+  if(D.lastRun) {
+    const ago = Math.round((Date.now()-D.lastRun)/1000/60);
+    document.getElementById('rundate').textContent = ago < 60 ? `${ago}m ago` : `${Math.round(ago/60)}h ago`;
+  }
+}
+
+// ════════════════════════════════════════════
+// FILTER & SEARCH
+// ════════════════════════════════════════════
+function setClusterFilter(cluster, btn) {
+  activeClusterFilter = cluster;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterFrames();
+}
+
+function filterFrames() {
+  const q = document.getElementById('frameSearch').value.toLowerCase();
+  const filtered = D.analyses.filter(a => {
+    const matchCluster = activeClusterFilter === 'all' || a.cluster === activeClusterFilter;
+    const matchSearch = !q || a.frameName.toLowerCase().includes(q) || a.fileLabel.toLowerCase().includes(q) || a.page.toLowerCase().includes(q);
+    return matchCluster && matchSearch;
+  });
+  renderFrameGrid('allFrames', filtered);
+}
+
+// ════════════════════════════════════════════
+// AI QUERY
+// ════════════════════════════════════════════
+function setQuery(ctx, text) {
+  const id = ctx === 'home' ? 'homeQuery' : 'queryInput';
+  document.getElementById(id).value = text;
+  if(ctx === 'home') runQuery('home'); else runQuery('main');
+}
+
+async function runQuery(ctx) {
+  const isHome = ctx === 'home';
+  const inputId = isHome ? 'homeQuery' : 'queryInput';
+  const btnId = isHome ? 'homeQueryBtn' : 'mainQueryBtn';
+  const resultId = isHome ? 'homeResult' : 'mainResult';
+  const thinkId = isHome ? 'homeThinking' : 'mainThinking';
+  const textId = isHome ? 'homeResultText' : 'mainResultText';
+
+  const q = document.getElementById(inputId).value.trim();
+  if(!q) return;
+
+  document.getElementById(btnId).disabled = true;
+  document.getElementById(resultId).classList.add('visible');
+  document.getElementById(thinkId).style.display = 'flex';
+  document.getElementById(textId).textContent = '';
+
+  try {
+    const context = `${D.styleGuide}\n\n## Frame Analysis Summary\nTotal frames: ${D.analyses.length}\nClusters: ${Object.entries(D.analyses.reduce((acc,a)=>{acc[a.cluster]=(acc[a.cluster]||0)+1;return acc},{})).map(([k,v])=>`${k}(${v})`).join(', ')}\n\nSample analyses:\n${D.analyses.slice(0,10).map(a=>`- ${a.frameName} (${a.cluster}): ${a.analysis?.designNotes||''}`).join('\n')}`;
+
+    const body = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: `You are the Edmunds design system expert. You have deep knowledge of the Edmunds visual language and design system based on analysis of ${D.analyses.length} Figma frames. Answer questions concisely and specifically. Reference actual colors, fonts, and patterns from the style guide. When relevant, give actionable design specs.`,
+      messages: [{ role:'user', content: `Style Guide & Context:\n${context}\n\nQuestion: ${q}` }]
+    };
+
+    let response;
+    try {
+      // Try proxy first
+      const r = await fetch(PROXY + '/api/analyze-frame', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ frame: { id: 'query', name: 'query', imageB64: null }, prompt: q, query: true, fullBody: body })
+      });
+      if(!r.ok) throw new Error('proxy');
+      const d = await r.json();
+      response = d.analysis?.raw || JSON.stringify(d.analysis);
+    } catch {
+      // Direct API call
+      const key = ANTHROPIC_KEY || prompt('Enter Anthropic API key:');
+      if(!key) throw new Error('No API key');
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01' },
+        body: JSON.stringify(body)
+      });
+      const d = await r.json();
+      response = d.content?.[0]?.text || 'No response';
+    }
+
+    document.getElementById(thinkId).style.display = 'none';
+    document.getElementById(textId).textContent = response;
+
+    // Save to history
+    D.queryHistory.unshift({ q, a: response, ts: new Date() });
+    renderQueryHistory();
+
+  } catch(e) {
+    document.getElementById(thinkId).style.display = 'none';
+    document.getElementById(textId).textContent = 'Error: ' + e.message;
+  }
+
+  document.getElementById(btnId).disabled = false;
+}
+
+function renderQueryHistory() {
+  const list = document.getElementById('historyList');
+  if(!list || !D.queryHistory.length) return;
+  document.getElementById('queryHistory').style.display = 'block';
+  list.innerHTML = D.queryHistory.slice(0,5).map(h => `
+    <div style="padding:12px 0;border-bottom:1px solid var(--b1)">
+      <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px">${h.q}</div>
+      <div style="font-size:11px;color:var(--ink3);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${h.a}</div>
+    </div>
+  `).join('');
+}
+
+// ════════════════════════════════════════════
+// MODAL
+// ════════════════════════════════════════════
+function openModal(a) {
+  document.getElementById('modalTitle').textContent = a.frameName;
+  document.getElementById('modalMeta').textContent = `${a.fileLabel} · ${a.page} · ${a.cluster} · ${a.width}×${a.height}px`;
+  const cc = CC[a.cluster]||CC['Other'];
+  const analysis = a.analysis || {};
+
+  const colorSwatches = (c => {
+    if(!c) return '';
+    const all = [...(c.dominant||[]), ...(c.accents||[])];
+    return `<div class="color-swatches">${all.map(h=>`<div class="swatch" style="background:${h}" onclick="navigator.clipboard.writeText('${h.toUpperCase()}');showToast('Copied: ${h.toUpperCase()}')"><div class="swatch-tooltip">${h.toUpperCase()}</div></div>`).join('')}</div>`;
+  })(analysis.colors);
+
+  document.getElementById('modalBody').innerHTML = `
+    ${a.imageUrl ? `<img class="modal-img" src="${a.imageUrl}" alt="${a.frameName}"/>` : ''}
+    <div style="margin-bottom:12px;display:flex;align-items:center;gap:8px">
+      <span class="chip" style="background:${cc.bg};color:${cc.color};border:1px solid ${cc.border}">${a.cluster}</span>
+      <span class="chip chip-blue">${a.width}×${a.height}px</span>
+    </div>
+    ${analysis.designNotes ? `<p style="font-size:13px;line-height:1.7;color:var(--ink2);margin-bottom:16px">${analysis.designNotes}</p>` : ''}
+    <div class="modal-grid">
+      <div class="modal-section">
+        <div class="ms-label">Colors</div>
+        <div class="ms-content">
+          ${analysis.colors ? `BG: <strong>${analysis.colors.background||'—'}</strong><br>Text: <strong>${analysis.colors.text||'—'}</strong>` : '—'}
+          ${colorSwatches}
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="ms-label">Typography</div>
+        <div class="ms-content">${analysis.typography ? `Fonts: <strong>${(analysis.typography.fonts||[]).join(', ')||'—'}</strong><br>Weight: ${analysis.typography.headingWeight||'—'}<br>Style: ${analysis.typography.style||'—'}` : '—'}</div>
+      </div>
+      <div class="modal-section">
+        <div class="ms-label">Layout</div>
+        <div class="ms-content">${analysis.layout ? `Type: <strong>${analysis.layout.type||'—'}</strong><br>Columns: ${analysis.layout.columns||'—'}<br>Density: ${analysis.layout.density||'—'}` : '—'}</div>
+      </div>
+      <div class="modal-section">
+        <div class="ms-label">Brand Keywords</div>
+        <div class="ms-content">${(analysis.brand?.keywords||[]).map(k=>`<span class="chip chip-blue" style="margin:2px;display:inline-block">${k}</span>`).join('')||'—'}</div>
+      </div>
+    </div>
+    ${(analysis.components||[]).length ? `
+    <div class="modal-section" style="margin-top:12px">
+      <div class="ms-label">Components Observed</div>
+      <div class="ms-content">${analysis.components.map(c=>`<div style="margin-bottom:4px"><strong>${c.type}</strong> — ${c.style}</div>`).join('')}</div>
+    </div>` : ''}
+  `;
+
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') closeModal();
+});
+
+// ════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function dlGuide() {
+  if(!D.styleGuide) return showToast('No style guide yet');
+  const blob = new Blob([D.styleGuide], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'eds-style-guide.md'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function triggerRun() {
+  showToast('Re-crawl triggered — check the pipeline tool');
+}
+
+// ════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════
+loadData();
+</script>
+</body>
+</html>
